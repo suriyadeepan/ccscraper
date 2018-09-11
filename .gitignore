@@ -1,0 +1,6 @@
+*.pdf
+*.epub
+*.mobi
+*.html
+# vim 
+.*swp
