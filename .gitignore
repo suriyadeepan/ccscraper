@@ -5,3 +5,4 @@
 # vim 
 .*swp
 __pycache__
+cc/
