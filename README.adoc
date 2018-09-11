@@ -1,0 +1,3 @@
+= CC Scrapers
+
+List of scraping scripts to fetch resources in CC
