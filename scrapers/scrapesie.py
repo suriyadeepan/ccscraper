@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import json
+import os
 
 
 def link2soup(link, features='lxml'):
@@ -22,6 +23,11 @@ def download_through_requests(url, filename, timeout=10):
         filename (str): name to save file
         timeout  (int): [10] #seconds to wait to throw TimedOut exception
     """
+    # fetch path to filename
+    directory = '/'.join(filename.split('/')[:-1])
+    # create directory if it doesn't exist
+    mkdir(directory)
+
     try:
         request = requests.get(url, timeout=timeout, stream=True)
         with open(filename, 'wb') as f:
@@ -29,3 +35,11 @@ def download_through_requests(url, filename, timeout=10):
                 f.write(chunk)
     except requests.exceptions.Timeout:
         print('Request timed out for "{}" !!'.format(url))
+
+def mkdir(directory):
+    """
+    Make directory if it doesn't exist
+
+    """
+    if not os.path.exists(directory):
+        os.makedirs(directory)
