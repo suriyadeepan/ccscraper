@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 
 def fetch_PDF_links():
-    soup = F.link2soup(SEED, 'html5lib')
+    soup = F.link2soup(SEED)
     return [ BASE + a.attrs['href'] for a in soup.find_all('a')
             if 'href' in a.attrs and a.attrs['href'][-3:] == 'pdf' ]
 

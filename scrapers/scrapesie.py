@@ -2,9 +2,10 @@ from bs4 import BeautifulSoup
 import requests
 import json
 import os
+from random import randint
 
 
-def link2soup(link, features='lxml'):
+def link2soup(link, headers=None):
     """
     Fetch contents from a URL as text
     Cast it into Soup
@@ -12,7 +13,16 @@ def link2soup(link, features='lxml'):
     Args:
         link (str): URL
     """
-    return BeautifulSoup(requests.get(link).text, features=features)
+    return BeautifulSoup(requests.get(link, headers=headers).content)
+
+def download_with_delays(urls, filenames, delay_min=5, delay_max=15):
+    for url, filename in zip(urls, filenames):
+        print(':: [download_with_delays] Downloading from "{}" to "{}"'.format( 
+            url, filename ))
+        download_through_requests(url, filename, timeout= 10+delay_min)
+        # random delay
+        delay = randint(delay_min, delay_max)
+        print(':: [ ] Inserting delay of {} seconds'.format(delay))
 
 def download_through_requests(url, filename, timeout=10):
     """
