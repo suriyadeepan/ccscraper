@@ -1,0 +1,52 @@
+from bs4 import BeautifulSoup
+import requests
+
+from pprint import pprint as pp
+from tqdm import tqdm
+
+
+HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
+        }
+_requests = lambda url : requests.get(url, headers=HEADERS)
+
+BASE_URL = 'http://freetamilebooks.com'
+PAGES_MAX = 28
+PAGE_URL_FORMAT = '/'.join([ BASE_URL, 'page', '{}', ''])
+
+
+def fetch_source(url):
+    return BeautifulSoup(_requests(url).content)
+
+def readfile(filename):
+    return open(filename).read()
+
+def fetch_local(filename):
+    return BeautifulSoup(readfile(filename))
+
+def fetch_links_containing(url, key):
+    return [ link.get('href')
+            for link in fetch_source(url).find_all('a') 
+            if 'href' in link.attrs and key in link.text ]
+
+def generate_pages():
+    return [ PAGE_URL_FORMAT.format(i) 
+            for i in range(1, PAGES_MAX+1) ]
+
+
+def fetch_books(url):
+    links = []
+    for link in fetch_source(url).find_all('a'):
+        if 'href' in link.attrs:
+            if '/ebooks/' in link.get('href'):
+                links.append(link.get('href'))
+    return list(set(links))
+
+
+if __name__ == '__main__':
+    books = [ fetch_books(url) for url in tqdm(generate_pages()) ]
+    books = [ i for l in books for i in l ]
+    epubs = [ fetch_links_containing(book, 'epub') 
+            for book in tqdm(books) ]
+    for i,b in enumerate(epubs):
+        print(i+1, b)
